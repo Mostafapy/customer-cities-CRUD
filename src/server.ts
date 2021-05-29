@@ -6,6 +6,7 @@ dotenv.config({ path: '.env' });
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { Logger } from './utils/logger.utils';
+import sequelize from './models/sequelize';
 
 // Intialize logger
 const logger = new Logger('server');
@@ -30,5 +31,16 @@ server.use((req: Request, _res: Response, next: NextFunction) => {
   });
   next();
 });
+
+// Sync sequelize in development only and migration un comment sync: true for one time
+sequelize
+  .authenticate()
+  .then(async () => {
+    logger.log('Sequelize Connection has been established successfully.');
+    // sequelize.sync({ force: true });
+  })
+  .catch((err: Error) => {
+    logger.error('Sequelize Unable to connect to the database', { err });
+  });
 
 export default server;
