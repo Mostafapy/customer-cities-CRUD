@@ -43,4 +43,7 @@ sequelize
     logger.error('Sequelize Unable to connect to the database', { err });
   });
 
-export default server;
+  // Server is listening for port
+server.listen(process.env.PORT, () =>
+    logger.log(`Server Listen Successfully To Port ${process.env.PORT}`),
+  );
