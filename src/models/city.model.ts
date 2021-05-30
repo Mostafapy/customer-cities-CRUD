@@ -2,7 +2,6 @@ import {
     Table,
     Column,
     Model,
-    BelongsToMany,
     DataType,
     PrimaryKey,
     AutoIncrement,
@@ -10,6 +9,7 @@ import {
     Sequelize,
     CreatedAt,
     UpdatedAt,
+    HasMany,
   } from 'sequelize-typescript';
 import Customer from './customer.model';
   
@@ -33,7 +33,10 @@ import Customer from './customer.model';
     @Column({ type: 'TIMESTAMP', defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') })
     public updatedAt: string;
     
-    @BelongsToMany(() => City, () => Customer)
+    @HasMany(() => Customer, {
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    })
     customers: Customer[];
   }
   
