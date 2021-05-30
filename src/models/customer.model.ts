@@ -37,9 +37,12 @@ import City from './city.model';
     @AllowNull(false)
     @ForeignKey(() => City)
     @Column
-    public kpiId: number;
+    public cityId: number;
 
-    @BelongsTo(() => City)
+    @BelongsTo(() => City, {
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    })
     city: City;
   }
   
