@@ -11,9 +11,12 @@ import {
     CreatedAt,
     UpdatedAt,
     BelongsTo,
+    createIndexDecorator,
   } from 'sequelize-typescript';
 import City from './city.model';
   
+const custmorNameIndex = createIndexDecorator({ name: 'CUSTOMERNAMEINDEX', unique: true });
+
   @Table({ tableName: 'customers' })
   class Customer extends Model<Customer> {
     @AllowNull(false)
@@ -24,6 +27,7 @@ import City from './city.model';
   
     @AllowNull(false)
     @Column({ type: DataType.STRING(50) })
+    @custmorNameIndex
     public name: string;
   
     @CreatedAt
