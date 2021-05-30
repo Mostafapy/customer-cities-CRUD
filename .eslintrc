@@ -147,7 +147,7 @@
         }
       ],
       "@typescript-eslint/no-unused-vars": 2,
-      "max-lines-per-function": [2, { "max": 40 }],
+      "max-lines-per-function": [2, { "max": 60 }],
       "max-lines": ["error", { "max": 300 }],
       "padding-line-between-statements": [
         "error",
