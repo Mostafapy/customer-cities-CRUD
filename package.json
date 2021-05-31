@@ -6,6 +6,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "start": "tsc && node dist/server.js",
+    "start:syncDB": "tsc && node dist/server.js -s",
     "build": "tsc",
     "watch:ts": "tsc -w",
     "watch-node": "nodemon ./dist/server.js",
