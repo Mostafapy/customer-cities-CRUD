@@ -55,11 +55,13 @@ const addCity = async (name: string): Promise<ResponseDto<any>> => {
 */
 const editCity = async (body: IEditCity): Promise<ResponseDto<IListCity>> => {
   try {
-    const foundCity = await sharedService.checkFoundRecordById(City, body.id);
+    const foundCity = await sharedService.checkFoundRecord(City, { where: { id: body.id } });
 
     await foundCity.update({ name: body.name });
 
-    const city = await sharedService.checkFoundRecordById(City, body.id, {
+    logger.log(`editCity Service Msg: Successfully update city of id ${body.id}`);
+
+    const city = await sharedService.checkFoundRecord(City, body.id, {
       include: [
         {
           model: Customer,
@@ -84,10 +86,10 @@ const editCity = async (body: IEditCity): Promise<ResponseDto<IListCity>> => {
           }),
         },
       },
-      statusCode: 201,
+      statusCode: 200,
     };
   } catch (err) {
-    if (err.message === `Record of id ${body.id} is not found`) {
+    if (err.message === 'The requied record is not found') {
       return {
         body: {
           message: EMessages.notFound,
@@ -118,7 +120,7 @@ const editCity = async (body: IEditCity): Promise<ResponseDto<IListCity>> => {
 */
 const findCityById = async (id: number): Promise<ResponseDto<IListCity>> => {
   try {
-    const foundCity = await sharedService.checkFoundRecordById(City, id, {
+    const foundCity = await sharedService.checkFoundRecord(City, { where: { id } }, {
       include: [
         {
           model: Customer,
@@ -127,6 +129,8 @@ const findCityById = async (id: number): Promise<ResponseDto<IListCity>> => {
         },
       ],
     });
+
+    logger.log(`findCityById Service Msg: Successfully found city of id ${id}`);
 
     return {
       body: {
@@ -143,10 +147,10 @@ const findCityById = async (id: number): Promise<ResponseDto<IListCity>> => {
           }),
         },
       },
-      statusCode: 201,
+      statusCode: 200,
     };
   } catch (err) {
-    if (err.message === `Record of id ${id} is not found`) {
+    if (err.message === 'The requied record is not found') {
       return {
         body: {
           message: EMessages.notFound,
@@ -177,9 +181,11 @@ const findCityById = async (id: number): Promise<ResponseDto<IListCity>> => {
 */
 const deleteCityById = async (id: number): Promise<ResponseDto<any>> => {
   try {
-    const foundCity = await sharedService.checkFoundRecordById(City, id);
+    const foundCity = await sharedService.checkFoundRecord(City, { where: { id } });
 
     await foundCity.destroy();
+
+    logger.log(`deleteCityById Service Msg: Successfully delete city of id ${id}`);
 
     return {
       body: {
@@ -187,10 +193,10 @@ const deleteCityById = async (id: number): Promise<ResponseDto<any>> => {
         success: true,
         data: null,
       },
-      statusCode: 201,
+      statusCode: 200,
     };
   } catch (err) {
-    if (err.message === `Record of id ${id} is not found`) {
+    if (err.message === 'The requied record is not found') {
       return {
         body: {
           message: EMessages.notFound,
@@ -214,5 +220,61 @@ const deleteCityById = async (id: number): Promise<ResponseDto<any>> => {
   }
 };
 
+const searchForCity = async(name: string): Promise<ResponseDto<IListCity>> => {
+   try {
+    const foundCity = await sharedService.checkFoundRecord(City, { where: { name } }, {
+      include: [
+        {
+          model: Customer,
+          as: 'customers',
+          attributes: ['id', 'name'],
+        },
+      ],
+    });
 
-export { addCity, editCity, findCityById, deleteCityById };
+    logger.log(`searchForCity Service Msg: Successfully found city of name ${name}`);
+    
+    return {
+      body: {
+        message: EMessages.done,
+        success: true,
+        data: {
+          id: foundCity?.id,
+          name: foundCity?.name,
+          customers: foundCity?.customers.map((customer: any) => {
+            return {
+              id: customer.id,
+              name: customer.name,
+            };
+          }),
+        },
+      },
+      statusCode: 200,
+    };
+    
+   } catch (err) {
+    if (err.message === 'The requied record is not found') {
+      return {
+        body: {
+          message: EMessages.notFound,
+          error: err.message,
+          success: false,
+          data: null,
+        },
+        statusCode: 404,
+      };
+    }
+
+    return {
+      body: {
+        message: EMessages.serverError,
+        error: err.message,
+        success: false,
+        data: null,
+      },
+      statusCode: 500,
+    };
+   }
+};
+
+export { addCity, editCity, findCityById, deleteCityById, searchForCity };
