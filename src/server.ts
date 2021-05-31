@@ -36,12 +36,14 @@ server.use((req: Request, _res: Response, next: NextFunction) => {
 // Initialize routes
 server.use(routes);
 
-// Sync sequelize in development only and migration un comment sync: true for one time
+// Sync sequelize in development only and migration sync: true for one time
 sequelize
   .authenticate()
   .then(async () => {
     logger.log('Sequelize Connection has been established successfully.');
-    // sequelize.sync({ force: true });
+    if (process.argv[2] === '-s') {
+       sequelize.sync({ force: true });
+    }
   })
   .catch((err: Error) => {
     logger.error('Sequelize Unable to connect to the database', { err });
