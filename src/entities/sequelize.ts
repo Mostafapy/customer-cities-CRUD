@@ -1,8 +1,8 @@
 import { Sequelize } from 'sequelize-typescript';
 
 // Import Models
-import City from './city.model';
-import Customer from './customer.model';
+import City from './city.entity';
+import Customer from './customer.entity';
 
 const sequelize: Sequelize = new Sequelize(
   process.env.DATABASE_DB_NAME || '',

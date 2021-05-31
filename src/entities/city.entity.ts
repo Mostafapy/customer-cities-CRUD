@@ -11,7 +11,7 @@ import {
   UpdatedAt,
   HasMany,
 } from 'sequelize-typescript';
-import Customer from './customer.model';
+import Customer from './customer.entity';
 
 // const cityNameIndex = createIndexDecorator({ name: 'CITYNAMEINDEX', unique: true });
 

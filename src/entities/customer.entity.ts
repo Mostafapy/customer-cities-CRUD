@@ -12,7 +12,7 @@ import {
   UpdatedAt,
   BelongsTo,
 } from 'sequelize-typescript';
-import City from './city.model';
+import City from './city.entity';
 
 // const custmorNameIndex = createIndexDecorator({ name: 'CUSTOMERNAMEINDEX', unique: true });
 
