@@ -12,5 +12,7 @@ router.get('/:id', controller.findCityById);
 
 router.delete('/:id', controller.deleteCityById);
 
+router.get('/search', controller.searchForCity);
+
 export default router;
 
