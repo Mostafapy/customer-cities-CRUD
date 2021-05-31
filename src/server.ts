@@ -7,6 +7,7 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { Logger } from './utils/logger.utils';
 import sequelize from './models/sequelize';
+import routes from './routes/index';
 
 // Intialize logger
 const logger = new Logger('server');
@@ -31,6 +32,9 @@ server.use((req: Request, _res: Response, next: NextFunction) => {
   });
   next();
 });
+
+// Initialize routes
+server.use(routes);
 
 // Sync sequelize in development only and migration un comment sync: true for one time
 sequelize
