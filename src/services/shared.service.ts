@@ -4,19 +4,19 @@ import { Logger } from '../utils/logger.utils';
 const logger: Logger = new Logger('Common Service');
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const checkFoundRecordById = async(model: any, id: number, options?: any): Promise<any> => {
+const checkFoundRecord = async(model: any, query:any, options?: any): Promise<any> => {
     try {
-        let condition: any;
+        let conditions: any;
 
         if (options) {
-          condition = { where: { id }, ...options };
+          conditions = { ...query, ...options };
         } else {
-          condition = { where: { id } };
+          conditions = query;
         }
 
-        const foundRecord = await model.findOne(condition);
+        const foundRecord = await model.findOne(conditions);
 
-        const notFoundError = new Error(`Record of id ${id} is not found`);
+        const notFoundError = new Error('The requied record is not found');
 
         if (!foundRecord) {
           logger.error('Common Service Error', {
@@ -34,5 +34,5 @@ const checkFoundRecordById = async(model: any, id: number, options?: any): Promi
 };
 
 export {
-    checkFoundRecordById
+  checkFoundRecord
 };
