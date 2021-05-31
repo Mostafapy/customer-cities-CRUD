@@ -13,7 +13,7 @@ const logger: Logger = new Logger('Customer Service');
  * @DESC Service for adding customer to DB
  * @param name string of input
  * @returns Promise | ERROR
-*/
+ */
 const addCustomer = async (name: string): Promise<ResponseDto<any>> => {
   try {
     // add new Customer
@@ -48,21 +48,29 @@ const addCustomer = async (name: string): Promise<ResponseDto<any>> => {
   }
 };
 
-const editCustomer = async (body: IEditCustomer): Promise<ResponseDto<IListCustomer>> => {
+const editCustomer = async (
+  body: IEditCustomer
+): Promise<ResponseDto<IListCustomer>> => {
   try {
-    const foundCustomer = await sharedService.checkFoundRecordById(Customer, body.id);
+    const foundCustomer = await sharedService.checkFoundRecord(Customer, {
+      where: { id: body.id },
+    });
 
     await foundCustomer.update({ name: body.name, cityId: body.cityId });
 
-    const customer = await sharedService.checkFoundRecordById(Customer, body.id, {
-      include: [
-        {
-          model: City,
-          as: 'city',
-          attributes: ['id', 'name'],
-        },
-      ],
-    });
+    const customer = await sharedService.checkFoundRecord(
+      Customer,
+      { where: { id: body.id } },
+      {
+        include: [
+          {
+            model: City,
+            as: 'city',
+            attributes: ['id', 'name'],
+          },
+        ],
+      }
+    );
 
     return {
       body: {
@@ -71,13 +79,13 @@ const editCustomer = async (body: IEditCustomer): Promise<ResponseDto<IListCusto
         data: {
           id: customer?.id,
           name: customer?.name,
-          city: customer?.city,
+          city: customer?.city ? customer?.city : null,
         },
       },
       statusCode: 200,
     };
   } catch (err) {
-    if (err.message === `Record of id ${body.id} is not found`) {
+    if (err.message === 'The requied record is not found') {
       return {
         body: {
           message: EMessages.notFound,
@@ -101,17 +109,25 @@ const editCustomer = async (body: IEditCustomer): Promise<ResponseDto<IListCusto
   }
 };
 
-const findCustomerById = async (id: number): Promise<ResponseDto<IListCustomer>> => {
+const findCustomerById = async (
+  id: number
+): Promise<ResponseDto<IListCustomer>> => {
   try {
-    const foundCustomer = await sharedService.checkFoundRecordById(Customer, id, {
-    include: [
-        {
+    const foundCustomer = await sharedService.checkFoundRecord(
+      Customer,
+      { where: { id } },
+      {
+        include: [
+          {
             model: City,
             as: 'city',
             attributes: ['id', 'name'],
-        },
-    ],
-    });
+          },
+        ],
+      }
+    );
+
+    logger.log(`findCustomerById Service Msg: Successfully found Customer of id ${id}`);
 
     return {
       body: {
@@ -120,13 +136,13 @@ const findCustomerById = async (id: number): Promise<ResponseDto<IListCustomer>>
         data: {
           id: foundCustomer?.id,
           name: foundCustomer?.name,
-          city: foundCustomer?.city,
+          city: foundCustomer?.city ? foundCustomer?.city : null,
         },
       },
       statusCode: 200,
     };
   } catch (err) {
-    if (err.message === `Record of id ${id} is not found`) {
+    if (err.message === 'The requied record is not found') {
       return {
         body: {
           message: EMessages.notFound,
@@ -152,9 +168,13 @@ const findCustomerById = async (id: number): Promise<ResponseDto<IListCustomer>>
 
 const deleteCustomerById = async (id: number): Promise<ResponseDto<any>> => {
   try {
-    const foundCustomer = await sharedService.checkFoundRecordById(Customer, id);
+    const foundCustomer = await sharedService.checkFoundRecord(Customer, {
+      where: { id },
+    });
 
     await foundCustomer.destroy();
+
+    logger.log(`deleteCustomerById Service Msg: Successfully remove Customer of id ${id}`);
 
     return {
       body: {
@@ -162,10 +182,10 @@ const deleteCustomerById = async (id: number): Promise<ResponseDto<any>> => {
         success: true,
         data: null,
       },
-      statusCode: 201,
+      statusCode: 200,
     };
   } catch (err) {
-    if (err.message === `Record of id ${id} is not found`) {
+    if (err.message === 'The requied record is not found') {
       return {
         body: {
           message: EMessages.notFound,
@@ -189,5 +209,56 @@ const deleteCustomerById = async (id: number): Promise<ResponseDto<any>> => {
   }
 };
 
+const searchForCustomer = async(name: string): Promise<ResponseDto<IListCustomer>> => {
+  try {
+   const foundCustomer = await sharedService.checkFoundRecord(Customer, { where: { name } }, {
+      include: [
+        {
+          model: City,
+          as: 'city',
+          attributes: ['id', 'name'],
+        },
+      ],
+   });
 
-export { addCustomer, editCustomer, findCustomerById, deleteCustomerById };
+   logger.log(`searchForCustomer Service Msg: Successfully found customer of name ${name}`);
+   
+   return {
+     body: {
+       message: EMessages.done,
+       success: true,
+       data: {
+        id: foundCustomer?.id,
+        name: foundCustomer?.name,
+        city: foundCustomer?.city ? foundCustomer?.city : null,
+       },
+     },
+     statusCode: 200,
+   };
+   
+  } catch (err) {
+   if (err.message === 'The requied record is not found') {
+     return {
+       body: {
+         message: EMessages.notFound,
+         error: err.message,
+         success: false,
+         data: null,
+       },
+       statusCode: 404,
+     };
+   }
+
+   return {
+     body: {
+       message: EMessages.serverError,
+       error: err.message,
+       success: false,
+       data: null,
+     },
+     statusCode: 500,
+   };
+  }
+};
+
+export { addCustomer, editCustomer, findCustomerById, deleteCustomerById, searchForCustomer };
