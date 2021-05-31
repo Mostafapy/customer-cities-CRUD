@@ -1,0 +1,7 @@
+TECHNICAL TASK
+===============
+
+- First copy the environment variables from the `sample.env` file and create `.env` file and replace <VALUE> with your credentials
+
+- For the first run open the terminal in the project directory and run `npm run start:syncDB` other than that you could run the project with 
+  `npm run start` or run it in watch mode in the development environment by running `npm run watch-node`
