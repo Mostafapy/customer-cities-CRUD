@@ -2,9 +2,9 @@ import { EMessages } from '../enums/messages.enum';
 import { ResponseDto } from '../dtos/response.dtos';
 import { IEditCustomer, IListCustomer } from '../dtos/customer.dto';
 import { Logger } from '../utils/logger.utils';
-import Customer from '../models/customer.model';
+import Customer from '../entities/customer.entity';
 import * as sharedService from './shared.service';
-import City from '../models/city.model';
+import City from '../entities/city.entity';
 
 // initialize logger
 const logger: Logger = new Logger('Customer Service');

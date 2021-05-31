@@ -6,7 +6,7 @@ dotenv.config({ path: '.env' });
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { Logger } from './utils/logger.utils';
-import sequelize from './models/sequelize';
+import sequelize from './entities/sequelize';
 import routes from './routes/index';
 
 // Intialize logger

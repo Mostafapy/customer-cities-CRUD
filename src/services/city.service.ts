@@ -1,9 +1,9 @@
 import { EMessages } from '../enums/messages.enum';
 import { ResponseDto } from '../dtos/response.dtos';
-import City from '../models/city.model';
+import City from '../entities/city.entity';
 import { IEditCity, IListCity } from '../dtos/city.dtos';
 import { Logger } from '../utils/logger.utils';
-import Customer from '../models/customer.model';
+import Customer from '../entities/customer.entity';
 import * as sharedService from './shared.service';
 
 // initialize logger
