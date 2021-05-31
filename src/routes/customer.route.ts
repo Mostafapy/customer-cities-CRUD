@@ -12,4 +12,6 @@ router.get('/:id', controller.findCustomerById);
 
 router.delete('/:id', controller.deleteCustomerById);
 
+router.get('/search', controller.searchForCustomer);
+
 export default router;
